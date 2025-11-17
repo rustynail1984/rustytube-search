@@ -57,6 +57,49 @@ cargo build --release
 
 The server will start on `http://localhost:3000` by default.
 
+### Command Line Options
+
+```bash
+# Show version (all work the same)
+./target/release/rustytube --version
+./target/release/rustytube -v
+./target/release/rustytube -V
+
+# Show help
+./target/release/rustytube --help
+./target/release/rustytube -h
+
+# Run with custom port
+./target/release/rustytube --port 3030
+./target/release/rustytube -p 3030
+
+# Bind to localhost only (more secure)
+./target/release/rustytube --host 127.0.0.1
+
+# Set log level to debug
+./target/release/rustytube --log-level debug
+
+# Set custom timeout (in seconds)
+./target/release/rustytube --timeout 60
+
+# Combine multiple options
+./target/release/rustytube --port 8080 --host 127.0.0.1 --log-level warn --timeout 45
+```
+
+**Available Options:**
+- `-p, --port <PORT>` - Port to listen on (default: 3000)
+- `--host <HOST>` - Host address to bind to (default: 0.0.0.0)
+- `--log-level <LEVEL>` - Log level: error, warn, info, debug, trace (default: info)
+- `--timeout <TIMEOUT>` - HTTP request timeout in seconds (default: 30)
+- `-v, -V, --version` - Print version information
+- `-h, --help` - Print help
+
+**Example output:**
+```bash
+$ ./target/release/rustytube -v
+RustyTube 1.0.0
+```
+
 ## API Documentation
 
 ### Health Check
@@ -145,28 +188,60 @@ All errors return a JSON response with detailed information:
 
 The server port can be configured in three ways (in order of priority):
 
-1. **CLI Argument**
-   ```bash
-   ./target/release/rustytube --port 3030
-   ```
-
-2. **Environment Variable**
+1. **Environment Variable** (highest priority)
    ```bash
    PORT=3030 ./target/release/rustytube
+   ```
+
+2. **CLI Argument**
+   ```bash
+   ./target/release/rustytube --port 3030
+   # or
+   ./target/release/rustytube -p 3030
    ```
 
 3. **Default** - Port 3000 if not specified
 
 ### Logging
 
-Set log level via the `RUST_LOG` environment variable:
+Set log level via the `--log-level` CLI argument or `RUST_LOG` environment variable (env var takes priority):
 
 ```bash
-# Debug logging
-RUST_LOG=debug ./target/release/rustytube
+# Using CLI argument (recommended)
+./target/release/rustytube --log-level info    # Default - Shows startup messages only
+./target/release/rustytube --log-level debug   # Shows all search requests and results
+./target/release/rustytube --log-level warn    # Shows only warnings and errors
+./target/release/rustytube --log-level error   # Shows only errors
 
-# Info logging (default)
-RUST_LOG=info ./target/release/rustytube
+# Using environment variable (overrides CLI argument)
+RUST_LOG=debug ./target/release/rustytube
+RUST_LOG=warn ./target/release/rustytube
+```
+
+**Recommended for production**: `--log-level info` or `--log-level warn`
+
+### Host Binding
+
+Configure which network interface to bind to:
+
+```bash
+# Bind to all interfaces (default) - accessible from anywhere
+./target/release/rustytube --host 0.0.0.0
+
+# Bind to localhost only - more secure, only local access
+./target/release/rustytube --host 127.0.0.1
+```
+
+### Request Timeout
+
+Configure the HTTP request timeout for YouTube API calls:
+
+```bash
+# Default timeout (30 seconds)
+./target/release/rustytube --timeout 30
+
+# Longer timeout for slow connections
+./target/release/rustytube --timeout 60
 ```
 
 ### Tokio Workers
@@ -278,6 +353,7 @@ location /api/ {
 - **[Reqwest](https://github.com/seanmonstar/reqwest)** - HTTP client with rustls
 - **[Rustls](https://github.com/rustls/rustls)** - Pure Rust TLS implementation (no OpenSSL dependency)
 - **[Serde](https://serde.rs/)** - JSON serialization
+- **[Clap](https://github.com/clap-rs/clap)** - Command-line argument parser
 - **[Tower HTTP](https://github.com/tower-rs/tower-http)** - CORS middleware
 - **[Tracing](https://github.com/tokio-rs/tracing)** - Structured logging
 
