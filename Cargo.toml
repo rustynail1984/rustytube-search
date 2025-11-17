@@ -1,6 +1,6 @@
 [package]
-name = "youtube-search-server"
-version = "0.1.0"
+name = "rustytube"
+version = "1.0.0"
 edition = "2021"
 
 [dependencies]
@@ -10,3 +10,11 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 reqwest = { version = "0.11", features = ["json"] }
 tower-http = { version = "0.5", features = ["cors"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true
