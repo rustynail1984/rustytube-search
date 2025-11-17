@@ -14,7 +14,31 @@ A blazingly fast YouTube search server written in Rust using YouTube's InnerTube
 
 ## Quick Start
 
-### Installation
+### Download Pre-built Binaries
+
+Download the latest release for your platform from [GitHub Releases](https://github.com/rustynail1984/youtube-search-server-rust/releases):
+
+**Linux x86_64:**
+- `rustytube-linux-x86_64` - Standard Linux (glibc)
+- `rustytube-linux-x86_64-musl` - Static binary (musl)
+
+**Linux ARM64 (Raspberry Pi, AWS Graviton, etc.):**
+- `rustytube-linux-aarch64` - Standard ARM64 Linux (glibc)
+- `rustytube-linux-aarch64-musl` - Static ARM64 binary (musl)
+
+```bash
+# Download and run (Linux x86_64 example)
+wget https://github.com/rustynail1984/youtube-search-server-rust/releases/latest/download/rustytube-linux-x86_64
+chmod +x rustytube-linux-x86_64
+./rustytube-linux-x86_64
+
+# For ARM64 (Raspberry Pi)
+wget https://github.com/rustynail1984/youtube-search-server-rust/releases/latest/download/rustytube-linux-aarch64
+chmod +x rustytube-linux-aarch64
+./rustytube-linux-aarch64
+```
+
+### Build from Source
 
 ```bash
 # Clone the repository

@@ -6,11 +6,11 @@ use axum::{
     Router,
 };
 use serde::{Deserialize, Serialize};
-use std::net::SocketAddr;
 use std::env;
+use std::net::SocketAddr;
 use std::sync::Arc;
 use tower_http::cors::{Any, CorsLayer};
-use tracing::{info, warn, error};
+use tracing::{error, info, warn};
 
 #[derive(Clone)]
 struct AppState {
@@ -123,19 +123,26 @@ fn parse_youtube_response(data: &serde_json::Value) -> SearchResponse {
         if let Some(renderer) = contents.get("twoColumnSearchResultsRenderer") {
             if let Some(primary) = renderer.get("primaryContents") {
                 if let Some(section_list) = primary.get("sectionListRenderer") {
-                    if let Some(section_contents) = section_list.get("contents").and_then(|v| v.as_array()) {
+                    if let Some(section_contents) =
+                        section_list.get("contents").and_then(|v| v.as_array())
+                    {
                         for section in section_contents {
                             if let Some(item_section) = section.get("itemSectionRenderer") {
-                                if let Some(items) = item_section.get("contents").and_then(|v| v.as_array()) {
+                                if let Some(items) =
+                                    item_section.get("contents").and_then(|v| v.as_array())
+                                {
                                     for item in items {
                                         if let Some(video) = item.get("videoRenderer") {
-                                            if let Some(video_result) = parse_video_renderer(video) {
+                                            if let Some(video_result) = parse_video_renderer(video)
+                                            {
                                                 results.push(video_result);
                                             }
                                         }
                                     }
                                 }
-                            } else if let Some(continuation_item) = section.get("continuationItemRenderer") {
+                            } else if let Some(continuation_item) =
+                                section.get("continuationItemRenderer")
+                            {
                                 if let Some(token) = continuation_item
                                     .get("continuationEndpoint")
                                     .and_then(|ep| ep.get("continuationCommand"))
@@ -157,14 +164,20 @@ fn parse_youtube_response(data: &serde_json::Value) -> SearchResponse {
         if let Some(commands) = on_response_received_commands.as_array() {
             for command in commands {
                 if let Some(append_continuation) = command.get("appendContinuationItemsAction") {
-                    if let Some(items) = append_continuation.get("continuationItems").and_then(|v| v.as_array()) {
+                    if let Some(items) = append_continuation
+                        .get("continuationItems")
+                        .and_then(|v| v.as_array())
+                    {
                         for item in items {
                             // Check for itemSectionRenderer first (common in continuation responses)
                             if let Some(item_section) = item.get("itemSectionRenderer") {
-                                if let Some(section_contents) = item_section.get("contents").and_then(|v| v.as_array()) {
+                                if let Some(section_contents) =
+                                    item_section.get("contents").and_then(|v| v.as_array())
+                                {
                                     for section_item in section_contents {
                                         if let Some(video) = section_item.get("videoRenderer") {
-                                            if let Some(video_result) = parse_video_renderer(video) {
+                                            if let Some(video_result) = parse_video_renderer(video)
+                                            {
                                                 results.push(video_result);
                                             }
                                         }
@@ -178,7 +191,9 @@ fn parse_youtube_response(data: &serde_json::Value) -> SearchResponse {
                                 }
                             }
                             // Check for continuation token
-                            else if let Some(continuation_item) = item.get("continuationItemRenderer") {
+                            else if let Some(continuation_item) =
+                                item.get("continuationItemRenderer")
+                            {
                                 if let Some(token) = continuation_item
                                     .get("continuationEndpoint")
                                     .and_then(|ep| ep.get("continuationCommand"))
@@ -204,35 +219,40 @@ fn parse_youtube_response(data: &serde_json::Value) -> SearchResponse {
 fn parse_video_renderer(video: &serde_json::Value) -> Option<VideoResult> {
     let id = video.get("videoId")?.as_str()?.to_string();
 
-    let title = video.get("title")
-        ?.get("runs")?
+    let title = video
+        .get("title")?
+        .get("runs")?
         .get(0)?
         .get("text")?
         .as_str()?
         .to_string();
 
     let thumbnails = video.get("thumbnail")?.get("thumbnails")?.as_array()?;
-    let thumb_default = thumbnails.get(0)?.get("url")?.as_str()?.to_string();
-    let thumb_medium = thumbnails.get(1)
+    let thumb_default = thumbnails.first()?.get("url")?.as_str()?.to_string();
+    let thumb_medium = thumbnails
+        .get(1)
         .and_then(|t| t.get("url"))
         .and_then(|u| u.as_str())
         .unwrap_or(&thumb_default)
         .to_string();
-    let thumb_high = thumbnails.get(2)
+    let thumb_high = thumbnails
+        .get(2)
         .and_then(|t| t.get("url"))
         .and_then(|u| u.as_str())
         .unwrap_or(&thumb_medium)
         .to_string();
 
-    let channel_title = video.get("ownerText")
-        ?.get("runs")?
+    let channel_title = video
+        .get("ownerText")?
+        .get("runs")?
         .get(0)?
         .get("text")?
         .as_str()?
         .to_string();
 
-    let channel_id = video.get("ownerText")
-        ?.get("runs")?
+    let channel_id = video
+        .get("ownerText")?
+        .get("runs")?
         .get(0)?
         .get("navigationEndpoint")?
         .get("browseEndpoint")?
@@ -240,19 +260,19 @@ fn parse_video_renderer(video: &serde_json::Value) -> Option<VideoResult> {
         .as_str()?
         .to_string();
 
-    let published_at = video.get("publishedTimeText")
-        ?.get("simpleText")?
+    let published_at = video
+        .get("publishedTimeText")?
+        .get("simpleText")?
         .as_str()?
         .to_string();
 
-    let duration = video.get("lengthText")
-        ?.get("simpleText")?
+    let duration = video
+        .get("lengthText")?
+        .get("simpleText")?
         .as_str()?
         .to_string();
 
-    let view_count_text = video.get("viewCountText")
-        ?.get("simpleText")?
-        .as_str()?;
+    let view_count_text = video.get("viewCountText")?.get("simpleText")?.as_str()?;
 
     let view_count = parse_view_count(view_count_text);
 
@@ -285,7 +305,6 @@ async fn search_youtube(
     query: Option<&str>,
     continuation: Option<String>,
 ) -> Result<serde_json::Value, YouTubeError> {
-
     // Get the search query for originalUrl - use query if available, otherwise extract from continuation context
     let url_query = query.unwrap_or("search");
 
@@ -356,7 +375,11 @@ async fn search_youtube(
         let raw_body = response.text().await.ok();
         return Err(YouTubeError {
             error_type: "http_error".to_string(),
-            message: format!("YouTube API returned HTTP {}: {}", status_code, status.canonical_reason().unwrap_or("Unknown")),
+            message: format!(
+                "YouTube API returned HTTP {}: {}",
+                status_code,
+                status.canonical_reason().unwrap_or("Unknown")
+            ),
             http_status_code: Some(status_code),
             youtube_response: None,
             raw_response: raw_body,
@@ -432,7 +455,7 @@ async fn handle_search(
 
             info!("Found {} videos", parsed_results.videos.len());
             Ok(Json(parsed_results))
-        },
+        }
         Err(e) => {
             error!("YouTube error - {}: {}", e.error_type, e.message);
 
@@ -447,7 +470,7 @@ async fn handle_search(
                     } else {
                         StatusCode::BAD_GATEWAY
                     }
-                },
+                }
                 "json_parse_error" => StatusCode::BAD_GATEWAY,
                 _ => StatusCode::INTERNAL_SERVER_ERROR,
             };
@@ -463,7 +486,7 @@ async fn handle_search(
                     raw_response: e.raw_response,
                 }),
             ))
-        },
+        }
     }
 }
 
