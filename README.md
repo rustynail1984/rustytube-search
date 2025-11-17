@@ -1,8 +1,9 @@
 # RustyTube 🦀
 
+[![CI Test](https://github.com/rustynail1984/youtube-search-server-rust/actions/workflows/ci.yml/badge.svg)](https://github.com/rustynail1984/youtube-search-server-rust/actions/workflows/ci.yml)
+
 A blazingly fast YouTube search server written in Rust using YouTube's InnerTube API.
 
-[![CI Test](https://github.com/rustynail1984/youtube-search-server-rust/actions/workflows/ci.yml/badge.svg)](https://github.com/rustynail1984/youtube-search-server-rust/actions/workflows/ci.yml)
 
 ## Features
 
