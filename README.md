@@ -2,6 +2,8 @@
 
 A blazingly fast YouTube search server written in Rust using YouTube's InnerTube API.
 
+[![CI Test](https://github.com/rustynail1984/youtube-search-server-rust/actions/workflows/ci.yml/badge.svg)](https://github.com/rustynail1984/youtube-search-server-rust/actions/workflows/ci.yml)
+
 ## Features
 
 - ⚡ **Fast & Lightweight** - Built with Rust and async runtime (Tokio)
@@ -272,7 +274,8 @@ location /api/ {
 
 - **[Axum](https://github.com/tokio-rs/axum)** - Web framework
 - **[Tokio](https://tokio.rs/)** - Async runtime
-- **[Reqwest](https://github.com/seanmonstar/reqwest)** - HTTP client
+- **[Reqwest](https://github.com/seanmonstar/reqwest)** - HTTP client with rustls
+- **[Rustls](https://github.com/rustls/rustls)** - Pure Rust TLS implementation (no OpenSSL dependency)
 - **[Serde](https://serde.rs/)** - JSON serialization
 - **[Tower HTTP](https://github.com/tower-rs/tower-http)** - CORS middleware
 - **[Tracing](https://github.com/tokio-rs/tracing)** - Structured logging
