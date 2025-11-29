@@ -1,6 +1,6 @@
 # RustyTube 🦀
 
-[![CI Test](https://github.com/rustynail1984/youtube-search-server-rust/actions/workflows/ci.yml/badge.svg)](https://github.com/rustynail1984/youtube-search-server-rust/actions/workflows/ci.yml) [![Release](https://github.com/rustynail1984/youtube-search-server-rust/actions/workflows/release.yml/badge.svg)](https://github.com/rustynail1984/youtube-search-server-rust/actions/workflows/release.yml)
+[![CI Test](https://github.com/rustynail1984/rustytube/actions/workflows/ci.yml/badge.svg)](https://github.com/rustynail1984/rustytube/actions/workflows/ci.yml) [![Release](https://github.com/rustynail1984/rustytube/actions/workflows/release.yml/badge.svg)](https://github.com/rustynail1984/rustytube/actions/workflows/release.yml)
 
 A blazingly fast YouTube search server written in Rust using YouTube's InnerTube API.
 
@@ -19,7 +19,7 @@ A blazingly fast YouTube search server written in Rust using YouTube's InnerTube
 
 ### Download Pre-built Binaries
 
-Download the latest release for your platform from [GitHub Releases](https://github.com/rustynail1984/youtube-search-server-rust/releases):
+Download the latest release for your platform from [GitHub Releases](https://github.com/rustynail1984/rustytube/releases):
 
 **Linux x86_64:**
 - `rustytube-linux-x86_64` - Standard Linux (glibc)
@@ -31,12 +31,12 @@ Download the latest release for your platform from [GitHub Releases](https://git
 
 ```bash
 # Download and run (Linux x86_64 example)
-wget https://github.com/rustynail1984/youtube-search-server-rust/releases/latest/download/rustytube-linux-x86_64
+wget https://github.com/rustynail1984/rustytube/releases/latest/download/rustytube-linux-x86_64
 chmod +x rustytube-linux-x86_64
 ./rustytube-linux-x86_64
 
 # For ARM64 (Raspberry Pi)
-wget https://github.com/rustynail1984/youtube-search-server-rust/releases/latest/download/rustytube-linux-aarch64
+wget https://github.com/rustynail1984/rustytube/releases/latest/download/rustytube-linux-aarch64
 chmod +x rustytube-linux-aarch64
 ./rustytube-linux-aarch64
 ```
@@ -45,8 +45,8 @@ chmod +x rustytube-linux-aarch64
 
 ```bash
 # Clone the repository
-git clone https://github.com/rustynail1984/youtube-search-server-rust
-cd youtube-search-server-rust
+git clone https://github.com/rustynail1984/rustytube
+cd rustytube
 
 # Build release version
 cargo build --release
@@ -125,7 +125,7 @@ Response:
 **GET /api/search/:query** - Search for YouTube videos
 
 ```bash
-curl http://localhost:3000/api/search/rust%20programming
+curl http://localhost:3000/api/search/sia
 ```
 
 Response:
@@ -154,7 +154,7 @@ Response:
 **GET /api/search/:query?next=:token** - Get next page of results
 
 ```bash
-curl "http://localhost:3000/api/search/rust%20programming?next=CONTINUATION_TOKEN"
+curl "http://localhost:3000/api/search/sia?next=CONTINUATION_TOKEN"
 ```
 
 Response format is the same as the search endpoint.
