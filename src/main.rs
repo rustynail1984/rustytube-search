@@ -22,6 +22,16 @@ fn get_port(cli_port: u16) -> u16 {
     cli_port
 }
 
+/// Hide username/password of a proxy URL so it can be logged safely.
+fn mask_proxy_credentials(proxy_url: &str) -> String {
+    if let Some((scheme, rest)) = proxy_url.split_once("://") {
+        if let Some((_, host)) = rest.rsplit_once('@') {
+            return format!("{}://***@{}", scheme, host);
+        }
+    }
+    proxy_url.to_string()
+}
+
 #[tokio::main]
 async fn main() {
     // Parse CLI arguments
@@ -45,9 +55,21 @@ async fn main() {
     info!("Starting RustyTube v{}", env!("CARGO_PKG_VERSION"));
 
     // Create shared HTTP client with connection pooling and configurable timeout
-    let http_client = reqwest::Client::builder()
+    let mut client_builder = reqwest::Client::builder()
         .pool_max_idle_per_host(10)
-        .timeout(std::time::Duration::from_secs(cli.timeout))
+        .timeout(std::time::Duration::from_secs(cli.timeout));
+
+    // Optional proxy for all outgoing requests to YouTube
+    if let Some(proxy_url) = cli.proxy.as_deref().map(str::trim).filter(|p| !p.is_empty()) {
+        let proxy = reqwest::Proxy::all(proxy_url).unwrap_or_else(|e| {
+            eprintln!("Invalid proxy URL '{}': {}", mask_proxy_credentials(proxy_url), e);
+            std::process::exit(1);
+        });
+        info!("Using proxy: {}", mask_proxy_credentials(proxy_url));
+        client_builder = client_builder.proxy(proxy);
+    }
+
+    let http_client = client_builder
         .build()
         .expect("Failed to create HTTP client");
 
@@ -79,4 +101,21 @@ async fn main() {
         .expect("Failed to bind to address");
 
     axum::serve(listener, app).await.unwrap();
+}
+
+#[cfg(test)]
+mod tests {
+    use super::mask_proxy_credentials;
+
+    #[test]
+    fn masks_credentials() {
+        assert_eq!(
+            mask_proxy_credentials("socks5://user:secret@1.2.3.4:1080"),
+            "socks5://***@1.2.3.4:1080"
+        );
+        assert_eq!(
+            mask_proxy_credentials("http://proxy.local:8080"),
+            "http://proxy.local:8080"
+        );
+    }
 }

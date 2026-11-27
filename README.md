@@ -91,6 +91,7 @@ The server will start on `http://localhost:3000` by default.
 - `--host <HOST>` - Host address to bind to (default: 0.0.0.0)
 - `--log-level <LEVEL>` - Log level: error, warn, info, debug, trace (default: info)
 - `--timeout <TIMEOUT>` - HTTP request timeout in seconds (default: 30)
+- `--proxy <URL>` - Proxy for requests to YouTube (http, https, socks5, socks5h; env: `RUSTYTUBE_PROXY`)
 - `-v, -V, --version` - Print version information
 - `-h, --help` - Print help
 
@@ -243,6 +244,23 @@ Configure the HTTP request timeout for YouTube API calls:
 # Longer timeout for slow connections
 ./target/release/rustytube --timeout 60
 ```
+
+### Proxy
+
+Route all requests to YouTube through a proxy via the `--proxy` CLI argument or the `RUSTYTUBE_PROXY` environment variable (the CLI argument takes priority). Supported schemes: `http://`, `https://`, `socks5://` and `socks5h://` (DNS resolved by the proxy).
+
+```bash
+# HTTP proxy
+./target/release/rustytube --proxy http://127.0.0.1:8080
+
+# SOCKS5 proxy with authentication
+./target/release/rustytube --proxy socks5://user:password@proxy.example.com:1080
+
+# Via environment variable
+RUSTYTUBE_PROXY=socks5h://127.0.0.1:9050 ./target/release/rustytube
+```
+
+Credentials are masked in the log output. An invalid proxy URL stops the server at startup. If no proxy is set, the standard `HTTP_PROXY` / `HTTPS_PROXY` environment variables are respected.
 
 ### Tokio Workers
 

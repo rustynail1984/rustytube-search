@@ -24,6 +24,11 @@ pub struct Cli {
     #[arg(long, default_value_t = 30)]
     pub timeout: u64,
 
+    /// Proxy URL for requests to YouTube, e.g. http://host:8080,
+    /// socks5://user:pass@host:1080 (can also be set via RUSTYTUBE_PROXY)
+    #[arg(long, env = "RUSTYTUBE_PROXY")]
+    pub proxy: Option<String>,
+
     /// Print version information
     #[arg(short = 'v', short_alias = 'V', long = "version", action = clap::ArgAction::Version)]
     _version: Option<bool>,
