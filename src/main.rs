@@ -60,9 +60,18 @@ async fn main() {
         .timeout(std::time::Duration::from_secs(cli.timeout));
 
     // Optional proxy for all outgoing requests to YouTube
-    if let Some(proxy_url) = cli.proxy.as_deref().map(str::trim).filter(|p| !p.is_empty()) {
+    if let Some(proxy_url) = cli
+        .proxy
+        .as_deref()
+        .map(str::trim)
+        .filter(|p| !p.is_empty())
+    {
         let proxy = reqwest::Proxy::all(proxy_url).unwrap_or_else(|e| {
-            eprintln!("Invalid proxy URL '{}': {}", mask_proxy_credentials(proxy_url), e);
+            eprintln!(
+                "Invalid proxy URL '{}': {}",
+                mask_proxy_credentials(proxy_url),
+                e
+            );
             std::process::exit(1);
         });
         info!("Using proxy: {}", mask_proxy_credentials(proxy_url));
