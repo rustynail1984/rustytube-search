@@ -13,7 +13,7 @@ pub async fn handle_search(
     State(state): State<Arc<AppState>>,
     Path(query): Path<String>,
     Query(params): Query<NextToken>,
-) -> Result<Json<SearchResponse>, (StatusCode, Json<ErrorResponse>)> {
+) -> Result<Json<SearchResponse>, (StatusCode, Json<Box<ErrorResponse>>)> {
     let search_query = if params.next.is_some() {
         debug!("Searching with continuation token");
         None
@@ -32,14 +32,14 @@ pub async fn handle_search(
                 warn!("YouTube returned unexpected response structure");
                 return Err((
                     StatusCode::BAD_GATEWAY,
-                    Json(ErrorResponse {
+                    Json(Box::new(ErrorResponse {
                         error: "unexpected_youtube_response".to_string(),
                         message: "YouTube returned an unexpected response format".to_string(),
                         error_type: Some("unexpected_response".to_string()),
                         http_status_code: Some(200),
                         youtube_response: Some(result),
                         raw_response: None,
-                    }),
+                    })),
                 ));
             }
 
@@ -49,14 +49,14 @@ pub async fn handle_search(
                 warn!("YouTube response parsed but no videos found");
                 return Err((
                     StatusCode::BAD_GATEWAY,
-                    Json(ErrorResponse {
+                    Json(Box::new(ErrorResponse {
                         error: "no_results".to_string(),
                         message: "No videos found in YouTube response".to_string(),
                         error_type: Some("no_results".to_string()),
                         http_status_code: Some(200),
                         youtube_response: Some(result),
                         raw_response: None,
-                    }),
+                    })),
                 ));
             }
 
@@ -84,14 +84,14 @@ pub async fn handle_search(
 
             Err((
                 status_code,
-                Json(ErrorResponse {
+                Json(Box::new(ErrorResponse {
                     error: "youtube_request_failed".to_string(),
                     message: e.message,
                     error_type: Some(e.error_type),
                     http_status_code: e.http_status_code,
                     youtube_response: e.youtube_response,
                     raw_response: e.raw_response,
-                }),
+                })),
             ))
         }
     }
