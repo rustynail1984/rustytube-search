@@ -19,7 +19,7 @@ A blazingly fast YouTube search server written in Rust using YouTube's InnerTube
 
 ### Download Pre-built Binaries
 
-Download the latest release for your platform from [GitHub Releases](https://github.com/rustynail1984/rustytube/releases):
+Download the latest release for your platform from [GitHub Releases](https://github.com/rustynail1984/rustytube-search/releases):
 
 **Linux x86_64:**
 - `rustytube-linux-x86_64` - Standard Linux (glibc)
@@ -31,12 +31,12 @@ Download the latest release for your platform from [GitHub Releases](https://git
 
 ```bash
 # Download and run (Linux x86_64 example)
-wget https://github.com/rustynail1984/rustytube/releases/latest/download/rustytube-linux-x86_64
+wget https://github.com/rustynail1984/rustytube-search/releases/latest/download/rustytube-linux-x86_64
 chmod +x rustytube-linux-x86_64
 ./rustytube-linux-x86_64
 
 # For ARM64 (Raspberry Pi)
-wget https://github.com/rustynail1984/rustytube/releases/latest/download/rustytube-linux-aarch64
+wget https://github.com/rustynail1984/rustytube-search/releases/latest/download/rustytube-linux-aarch64
 chmod +x rustytube-linux-aarch64
 ./rustytube-linux-aarch64
 ```
@@ -45,7 +45,7 @@ chmod +x rustytube-linux-aarch64
 
 ```bash
 # Clone the repository
-git clone https://github.com/rustynail1984/rustytube
+git clone https://github.com/rustynail1984/rustytube-search
 cd rustytube
 
 # Build release version
